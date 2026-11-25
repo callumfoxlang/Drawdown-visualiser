@@ -89,6 +89,8 @@
     document.getElementById("chart-horizon").textContent = `${options.years} YEARS · ${options.simulations.toLocaleString("en-GB")} SIMULATIONS`;
   }
   const status = document.getElementById("form-status");
+  const exportButton = document.getElementById("export");
+  const exportStatus = document.getElementById("export-status");
   let updateTimer;
 
   function update() {
@@ -96,7 +98,9 @@
       run();
       status.classList.remove("error");
       status.textContent = "Results update automatically.";
+      exportButton.disabled = false;
     } catch (exception) {
+      exportButton.disabled = true;
       status.classList.add("error");
       status.textContent = "Unable to update the simulation. Previous results are shown.";
       console.error(exception);
@@ -105,6 +109,8 @@
 
   function scheduleUpdate() {
     clearTimeout(updateTimer);
+    exportButton.disabled = true;
+    exportStatus.textContent = "";
     const invalid = form.querySelector(":invalid");
     if (invalid) {
       const label = invalid.labels[0].childNodes[0].textContent.trim();
@@ -122,6 +128,82 @@
   form.addEventListener("submit", event => {
     event.preventDefault();
     scheduleUpdate();
+  });
+
+  exportButton.addEventListener("click", async () => {
+    exportButton.disabled = true;
+    exportStatus.textContent = "Preparing image...";
+    let imageUrl;
+    try {
+      const wrapper = element("svg", { xmlns: ns, width: 1000, height: 1210, viewBox: "0 0 1000 1210" });
+      const text = (x, y, value, attributes = {}) => wrapper.append(element("text", {
+        x, y, fill: "#233b32", "font-family": "Arial, sans-serif", "font-size": 13, ...attributes
+      }, value));
+      wrapper.append(element("rect", { width: 1000, height: 1210, fill: "#f5f6f2" }));
+      text(30, 38, "Drawdown visualiser", { "font-family": "Georgia, serif", "font-size": 28 });
+      text(30, 65, `Illustrative scenario: ${document.getElementById("years").value} years · ${document.getElementById("simulations").value} simulations · Inflation ${document.getElementById("inflation").value}% · Equities ${document.getElementById("equity-return").value}% · Bonds ${document.getElementById("bond-return").value}%`);
+      text(30, 90, "Synthetic returns, not historical UK market data. Results are not financial advice.", { fill: "#7d765b" });
+      wrapper.append(element("rect", { x: 30, y: 110, width: 940, height: 530, rx: 10, fill: "#fff", stroke: "#e8ece6" }));
+      text(58, 145, "THE BIG PICTURE", { fill: "#6d9477", "font-size": 11, "font-weight": "bold" });
+      text(58, 177, "Where does the risk begin?", { "font-family": "Georgia, serif", "font-size": 24 });
+      text(58, 198, "Portfolio failure rate by initial withdrawal rate", { fill: "#8a978c", "font-size": 12 });
+      const chart = svg.cloneNode(true);
+      chart.setAttribute("x", "75");
+      chart.setAttribute("y", "210");
+      chart.setAttribute("width", "850");
+      chart.setAttribute("height", "340");
+      const chartStyle = element("style", {});
+      chartStyle.textContent = '.grid-line { stroke: #e9eee8; stroke-width: 1; } .axis-label { font: 11px Arial, sans-serif; fill: #91a095; } .axis-title { font: 700 9px Arial, sans-serif; letter-spacing: .12em; fill: #9aa99b; }';
+      chart.prepend(chartStyle);
+      wrapper.append(chart);
+      colours.forEach((colour, index) => {
+        const x = 86 + index * 75;
+        wrapper.append(element("rect", { x, y: 575, width: 15, height: 3, rx: 1, fill: colour }));
+        text(x + 20, 580, "P" + index * 10, { fill: "#78897b", "font-size": 11 });
+      });
+      text(58, 615, "← LOWER WITHDRAWAL", { fill: "#acb8ad", "font-size": 10 });
+      text(942, 615, "HIGHER WITHDRAWAL →", { fill: "#acb8ad", "font-size": 10, "text-anchor": "end" });
+
+      wrapper.append(element("rect", { x: 30, y: 660, width: 940, height: 520, rx: 10, fill: "#fff", stroke: "#e8ece6" }));
+      text(58, 695, "A CLOSER LOOK", { fill: "#6d9477", "font-size": 11, "font-weight": "bold" });
+      text(58, 727, "The numbers, at a glance.", { "font-family": "Georgia, serif", "font-size": 24 });
+      text(58, 748, "The percentage of simulations where the portfolio ran out.", { fill: "#8a978c", "font-size": 12 });
+      const rows = document.querySelectorAll("#heatmap tr");
+      rows.forEach((row, rowIndex) => {
+        Array.from(row.cells).forEach((cell, columnIndex) => {
+          const x = 65 + columnIndex * 72;
+          const y = 770 + rowIndex * 32;
+          if (cell.tagName === "TD") wrapper.append(element("rect", { x, y, width: 69, height: 29, rx: 3, fill: cell.style.backgroundColor }));
+          text(x + 34.5, y + 19, cell.textContent, { "text-anchor": "middle", fill: cell.tagName === "TD" ? "#425747" : "#829286", "font-size": 11, "font-weight": cell.tagName === "TH" ? "bold" : "normal" });
+        });
+      });
+      text(58, 1150, "PORTFOLIO MIX: P0 = 100% BONDS · P100 = 100% EQUITIES", { fill: "#829286", "font-size": 10 });
+      imageUrl = URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(wrapper)], { type: "image/svg+xml;charset=utf-8" }));
+      const image = new Image();
+      image.src = imageUrl;
+      await image.decode();
+      const canvas = document.createElement("canvas");
+      canvas.width = 2000;
+      canvas.height = 2420;
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Unable to create image canvas.");
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      const png = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+      if (!png) throw new Error("Unable to create PNG image.");
+      const downloadUrl = URL.createObjectURL(png);
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = "drawdown-visualiser.png";
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(downloadUrl), 60000);
+      exportStatus.textContent = "Image downloaded.";
+    } catch (exception) {
+      exportStatus.textContent = "Unable to export the image. Please try again.";
+      console.error(exception);
+    } finally {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      exportButton.disabled = status.textContent !== "Results update automatically.";
+    }
   });
   update();
 })();

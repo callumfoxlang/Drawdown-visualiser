@@ -8,6 +8,8 @@ Open `tests/model.test.html` and `tests/updates.test.html` in a browser to run t
 
 The chart and heatmap show estimated failure rates for initial withdrawal rates of 1% to 10% and 11 portfolios: P0 is 100% bonds, P100 is 100% equities, and each intermediate step adds 10 percentage points of equities. Choose a 20, 30 or 40-year horizon, inflation, simulation count, and assumed equity and bond returns; the results update automatically. Invalid inputs leave the previous results displayed until corrected.
 
+Select **Download chart & heatmap as PNG** to save both visualisations together with their current assumptions and an illustrative-data warning. Export is available once the latest valid simulation has finished updating.
+
 ## Method and limitations
 
 This prototype does **not** contain historical UK market data. It generates a reproducible pool of 414 synthetic monthly equity and bond return pairs, calibrated to the entered annualised means, annual volatilities of 16% and 6%, and a correlation of 0.2. Each simulated year draws 12 paired months with replacement; the arithmetic average monthly portfolio return multiplied by 12 is used as the annual return. Annual losses are capped at 100%. The same sampled return paths are used across portfolios and withdrawal rates for comparison.
