@@ -4,14 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f6f2">
-  <title>Drawdown Lab | Retirement withdrawal explorer</title>
+  <title>Drawdown visualiser | Retirement withdrawal explorer</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="model.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span> drawdown<span>lab</span></div>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span> Drawdown <span>visualiser</span></div>
     <span class="topbar-note">RETIREMENT PLANNING TOOL</span>
   </header>
 
@@ -25,7 +25,7 @@
       <div class="intro-aside"><span>01 / THE EXPLORER</span><p>A little perspective<br>for the long run.</p></div>
     </section>
 
-    <div class="notice"><span class="notice-icon" aria-hidden="true">i</span><p><strong>Illustrative data, not historical results.</strong> This version uses synthetic returns, not Albion’s portfolios or UK market data. Results are not financial advice.</p></div>
+    <div class="notice"><span class="notice-icon" aria-hidden="true">i</span><p><strong>Illustrative data, not historical results.</strong> This version uses synthetic returns, not historical UK market data. Results are not financial advice.</p></div>
 
     <div class="layout">
       <aside class="card settings">
@@ -48,8 +48,7 @@
             <div><label for="equity-return">Equities</label><div class="field-wrap"><input id="equity-return" type="number" min="-10" max="25" step="0.1" value="7" required><span class="suffix">%</span></div></div>
             <div><label for="bond-return">Bonds</label><div class="field-wrap"><input id="bond-return" type="number" min="-10" max="25" step="0.1" value="3.5" required><span class="suffix">%</span></div></div>
           </div>
-          <button type="submit">Run simulation <span aria-hidden="true">↗</span></button>
-          <p id="form-error" class="error" role="alert"></p>
+          <p id="form-status" class="form-status" role="status" aria-live="polite"></p>
         </form>
         <div class="settings-footer"><span aria-hidden="true">✳</span> Results are estimates, not predictions.</div>
       </aside>
@@ -72,6 +71,6 @@
     </div>
     <section class="method"><div><p class="eyebrow">BEHIND THE NUMBERS</p><h2>What’s happening here?</h2></div><div><p>We generate a fixed pool of illustrative monthly equity and bond returns, then sample paired months with replacement. For each simulated year, the average monthly portfolio return is multiplied by 12. Each portfolio is a fixed blend of equities and bonds.</p><p>At the end of each year, a withdrawal based on the initial portfolio value is taken and increased by inflation each subsequent year. A simulation fails if the portfolio reaches zero or cannot meet a withdrawal, including in the final year. The same sampled paths are used across portfolios and withdrawal rates.</p><p>Equity and bond volatility are fixed at 16% and 6% annually, with a 0.2 correlation. A fixed random seed makes results reproducible; annual losses are capped at 100%. The model excludes fees, taxes and changing allocations. It is not a forecast or financial advice.</p></div></section>
   </main>
-  <footer><span class="brand footer-brand"><span class="brand-mark" aria-hidden="true">◈</span> drawdown<span>lab</span></span><span>THOUGHTFUL PLANNING FOR WHAT’S NEXT.</span></footer>
+  <footer><span class="brand footer-brand"><span class="brand-mark" aria-hidden="true">◈</span> Drawdown <span>visualiser</span></span><span>THOUGHTFUL PLANNING FOR WHAT’S NEXT.</span></footer>
 </body>
 </html>

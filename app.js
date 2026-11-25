@@ -88,16 +88,40 @@
     drawTable(results);
     document.getElementById("chart-horizon").textContent = `${options.years} YEARS · ${options.simulations.toLocaleString("en-GB")} SIMULATIONS`;
   }
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    const error = document.getElementById("form-error");
-    error.textContent = "";
+  const status = document.getElementById("form-status");
+  let updateTimer;
+
+  function update() {
     try {
       run();
+      status.classList.remove("error");
+      status.textContent = "Results update automatically.";
     } catch (exception) {
-      error.textContent = "Unable to run the simulation. Check the assumptions and try again.";
+      status.classList.add("error");
+      status.textContent = "Unable to update the simulation. Previous results are shown.";
       console.error(exception);
     }
+  }
+
+  function scheduleUpdate() {
+    clearTimeout(updateTimer);
+    const invalid = form.querySelector(":invalid");
+    if (invalid) {
+      const label = invalid.labels[0].childNodes[0].textContent.trim();
+      status.classList.add("error");
+      status.textContent = `${label}: ${invalid.validationMessage} Previous results are shown.`;
+      return;
+    }
+    status.classList.remove("error");
+    status.textContent = "Updating results...";
+    updateTimer = setTimeout(update, 300);
+  }
+
+  form.addEventListener("input", scheduleUpdate);
+  form.addEventListener("change", scheduleUpdate);
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    scheduleUpdate();
   });
-  run();
+  update();
 })();

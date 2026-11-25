@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 
 ROOT = Path(__file__).resolve().parent
 
-st.set_page_config(page_title="Drawdown Lab", layout="wide")
+st.set_page_config(page_title="Drawdown visualiser", layout="wide")
 
 html = (ROOT / "index.html").read_text(encoding="utf-8")
 css = (ROOT / "styles.css").read_text(encoding="utf-8")

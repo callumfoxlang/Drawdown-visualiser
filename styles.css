@@ -30,13 +30,12 @@ h2 { font-size: 24px; line-height: 1.2; margin: 0; letter-spacing: -.015em; }
 form { margin-top: 24px; } label { display: block; color: #344b3d; font-size: 12px; font-weight: 700; margin: 19px 0 8px; }
 label span { display: block; color: #9ca89d; font-size: 11px; font-weight: 400; margin-top: 5px; }
 .field-wrap { position: relative; } input, select { font: inherit; font-size: 13px; color: #31483b; background: #f9faf7; border: 1px solid #e3e9e1; border-radius: 6px; padding: 12px 13px; width: 100%; min-height: 43px; }
-input:focus, select:focus, button:focus-visible { outline: 2px solid #7fa68a; outline-offset: 2px; }
+input:focus, select:focus { outline: 2px solid #7fa68a; outline-offset: 2px; }
 .suffix { position: absolute; right: 13px; top: 12px; color: #97a69a; font-size: 13px; pointer-events: none; }
 input[type=number] { padding-right: 32px; }.divider { height: 1px; background: #edf0ea; margin: 24px 0; }
 .assumptions-title { color: #8ea095; font-size: 9px; letter-spacing: .13em; font-weight: 700; margin: 0; }.small { font-size: 11px; }
 .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }.input-grid label { margin-top: 14px; }
-button { margin-top: 25px; width: 100%; background: #294d3b; color: white; border: 0; border-radius: 6px; padding: 14px 16px; font: inherit; font-size: 12px; font-weight: 700; text-align: left; cursor: pointer; } button:hover { background: #3a624a; } button span { float: right; }
-.error { color: #a53d32; font-size: 12px; }.error:empty { display: none; }
+.form-status { margin: 20px 0 0; color: #6d9477; font-size: 12px; line-height: 1.5; }.form-status.error { color: #a53d32; }
 .settings-footer { margin-top: 24px; padding-top: 20px; border-top: 1px solid #edf0ea; color: #a0aca2; font-size: 11px; }.settings-footer span { font-size: 15px; color: #91aa96; margin-right: 5px; }
 .results { display: grid; gap: 22px; min-width: 0; }.results > * { min-width: 0; }.chart-meta { display: flex; justify-content: space-between; margin: 30px 0 8px; font-size: 9px; letter-spacing: .12em; font-weight: 700; color: #9aa89b; }.chart-meta i { display: inline-block; width: 7px; height: 7px; background: #75a180; border-radius: 50%; margin-right: 6px; }
 .chart-container { width: 100%; overflow: hidden; } #chart { width: 100%; display: block; overflow: visible; }.grid-line { stroke: #e9eee8; stroke-width: 1; }.axis-label { font: 11px "DM Sans", sans-serif; fill: #91a095; }.axis-title { font: 700 9px "DM Sans", sans-serif; letter-spacing: .12em; fill: #9aa99b; }
