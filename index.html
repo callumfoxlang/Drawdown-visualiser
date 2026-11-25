@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f2">
+  <title>Drawdown Lab | Retirement withdrawal explorer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="model.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span> drawdown<span>lab</span></div>
+    <span class="topbar-note">RETIREMENT PLANNING TOOL</span>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div>
+        <p class="eyebrow"><span></span> RETIREMENT MODELLING</p>
+        <h1>Make the most of<br><em>what you’ve built.</em></h1>
+        <p class="intro-copy">Explore how your withdrawal rate and investment mix could affect the longevity of your portfolio.</p>
+      </div>
+      <div class="intro-aside"><span>01 / THE EXPLORER</span><p>A little perspective<br>for the long run.</p></div>
+    </section>
+
+    <div class="notice"><span class="notice-icon" aria-hidden="true">i</span><p><strong>Illustrative data, not historical results.</strong> This version uses synthetic returns, not Albion’s portfolios or UK market data. Results are not financial advice.</p></div>
+
+    <div class="layout">
+      <aside class="card settings">
+        <div class="section-heading"><div><p class="eyebrow">YOUR SCENARIO</p><h2>Set your parameters</h2></div><span class="section-number">01</span></div>
+        <p class="muted">Adjust the assumptions to explore different retirement scenarios.</p>
+        <form id="scenario-form">
+          <label for="years">Retirement horizon <span>How long your portfolio needs to last</span></label>
+          <div class="field-wrap"><select id="years" name="years"><option value="20">20 years</option><option value="30" selected>30 years</option><option value="40">40 years</option></select></div>
+
+          <label for="inflation">Annual inflation <span>Increases your withdrawal each year</span></label>
+          <div class="field-wrap"><input id="inflation" name="inflation" type="number" min="0" max="15" step="0.1" value="2.5" required><span class="suffix">%</span></div>
+
+          <label for="simulations">Simulations per scenario <span>More simulations give a steadier estimate</span></label>
+          <div class="field-wrap"><input id="simulations" name="simulations" type="number" min="100" max="5000" step="100" value="200" required></div>
+
+          <div class="divider"></div>
+          <p class="assumptions-title">ILLUSTRATIVE RETURN ASSUMPTIONS</p>
+          <p class="muted small">Annualised averages used to generate the synthetic monthly return pool.</p>
+          <div class="input-grid">
+            <div><label for="equity-return">Equities</label><div class="field-wrap"><input id="equity-return" type="number" min="-10" max="25" step="0.1" value="7" required><span class="suffix">%</span></div></div>
+            <div><label for="bond-return">Bonds</label><div class="field-wrap"><input id="bond-return" type="number" min="-10" max="25" step="0.1" value="3.5" required><span class="suffix">%</span></div></div>
+          </div>
+          <button type="submit">Run simulation <span aria-hidden="true">↗</span></button>
+          <p id="form-error" class="error" role="alert"></p>
+        </form>
+        <div class="settings-footer"><span aria-hidden="true">✳</span> Results are estimates, not predictions.</div>
+      </aside>
+
+      <div class="results">
+        <section class="card chart-card" aria-labelledby="chart-title">
+          <div class="section-heading"><div><p class="eyebrow">THE BIG PICTURE</p><h2 id="chart-title">Where does the risk begin?</h2><p class="muted">Portfolio failure rate by initial withdrawal rate</p></div><span class="section-number">02</span></div>
+          <div class="chart-meta"><span><i></i> SIMULATION OUTCOMES</span><span id="chart-horizon"></span></div>
+          <div class="chart-container"><svg id="chart" viewBox="0 0 760 340" role="img" aria-labelledby="chart-svg-title chart-svg-desc"><title id="chart-svg-title">Failure rates by withdrawal rate and portfolio</title><desc id="chart-svg-desc">The same values are available in the table below.</desc></svg></div>
+          <div id="legend" class="legend" aria-label="Portfolio legend"></div>
+          <div class="chart-caption"><span>← LOWER WITHDRAWAL</span><span>HIGHER WITHDRAWAL →</span></div>
+        </section>
+
+        <section class="card heatmap-card" aria-labelledby="heatmap-title">
+          <div class="section-heading"><div><p class="eyebrow">A CLOSER LOOK</p><h2 id="heatmap-title">The numbers, at a glance.</h2><p class="muted">The percentage of simulations where the portfolio ran out.</p></div><span class="section-number">03</span></div>
+          <div class="table-scroll"><table id="heatmap"><caption class="sr-only">Failure rates by withdrawal rate and portfolio allocation</caption><thead></thead><tbody></tbody></table></div>
+          <div class="heatmap-footer"><span>PORTFOLIO MIX: P0 = 100% BONDS · P100 = 100% EQUITIES</span><div><span>LOWER RISK</span><i class="gradient"></i><span>HIGHER RISK</span></div></div>
+        </section>
+      </div>
+    </div>
+    <section class="method"><div><p class="eyebrow">BEHIND THE NUMBERS</p><h2>What’s happening here?</h2></div><div><p>We generate a fixed pool of illustrative monthly equity and bond returns, then sample paired months with replacement. For each simulated year, the average monthly portfolio return is multiplied by 12. Each portfolio is a fixed blend of equities and bonds.</p><p>At the end of each year, a withdrawal based on the initial portfolio value is taken and increased by inflation each subsequent year. A simulation fails if the portfolio reaches zero or cannot meet a withdrawal, including in the final year. The same sampled paths are used across portfolios and withdrawal rates.</p><p>Equity and bond volatility are fixed at 16% and 6% annually, with a 0.2 correlation. A fixed random seed makes results reproducible; annual losses are capped at 100%. The model excludes fees, taxes and changing allocations. It is not a forecast or financial advice.</p></div></section>
+  </main>
+  <footer><span class="brand footer-brand"><span class="brand-mark" aria-hidden="true">◈</span> drawdown<span>lab</span></span><span>THOUGHTFUL PLANNING FOR WHAT’S NEXT.</span></footer>
+</body>
+</html>
