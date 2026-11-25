@@ -1,6 +1,8 @@
 # Drawdown Lab
 
-Open `index.html` in a browser to explore illustrative retirement withdrawal outcomes. No installation or server is required.
+To run with Streamlit, install the dependencies with `pip install -r requirements.txt` and run `streamlit run app.py`. For Streamlit Community Cloud, select this repository and branch and set the main file path to `app.py`. Commit and push the files before deploying, so Streamlit can access them.
+
+Alternatively, open `index.html` in a browser to explore illustrative retirement withdrawal outcomes without installing anything.
 
 Open `tests/model.test.html` in a browser to run the model tests.
 
