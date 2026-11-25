@@ -35,9 +35,11 @@
   }
 
   function simulate(options) {
-    const { years, simulations, inflation, equityReturn, bondReturn } = options;
-    if (![20, 30, 40].includes(years) || !Number.isInteger(simulations) || simulations < 100 || simulations > 5000 ||
+    const { years, simulations, inflation, equityReturn, bondReturn, fees, strategy } = options;
+    if (!Number.isInteger(years) || years < 1 || years > 60 || !Number.isInteger(simulations) || simulations < 100 || simulations > 5000 ||
         !Number.isFinite(inflation) || inflation < 0 || inflation > 0.15 ||
+        !Number.isFinite(fees) || fees < 0 || fees > 0.1 ||
+        !["inflation-adjusted", "fixed"].includes(strategy) ||
         !Number.isFinite(equityReturn) || equityReturn < -0.1 || equityReturn > 0.25 ||
         !Number.isFinite(bondReturn) || bondReturn < -0.1 || bondReturn > 0.25) {
       throw new RangeError("Invalid simulation parameters.");
@@ -58,14 +60,14 @@
         }
         for (let portfolio = 0; portfolio <= 10; portfolio++) {
           const equityWeight = portfolio / 10;
-          const growth = Math.max(0, 1 + equity * equityWeight + bond * (1 - equityWeight));
+          const growth = Math.max(0, 1 + equity * equityWeight + bond * (1 - equityWeight)) * (1 - fees);
           for (let rate = 0; rate < 10; rate++) {
             if (balances[rate][portfolio] <= 0) continue;
             balances[rate][portfolio] = Math.max(0, balances[rate][portfolio] * growth - (rate + 1) / 100 * withdrawalMultiplier);
             if (balances[rate][portfolio] === 0) failures[rate][portfolio]++;
           }
         }
-        withdrawalMultiplier *= 1 + inflation;
+        if (strategy === "inflation-adjusted") withdrawalMultiplier *= 1 + inflation;
       }
     }
     return failures.map(row => row.map(count => count / simulations * 100));

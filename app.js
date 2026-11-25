@@ -76,17 +76,20 @@
   });
 
   function run() {
+    const startAge = Number(document.getElementById("start-age").value);
     const options = {
       years: Number(document.getElementById("years").value),
       simulations: Number(document.getElementById("simulations").value),
       inflation: Number(document.getElementById("inflation").value) / 100,
+      fees: Number(document.getElementById("fees").value) / 100,
+      strategy: document.getElementById("strategy").value,
       equityReturn: Number(document.getElementById("equity-return").value) / 100,
       bondReturn: Number(document.getElementById("bond-return").value) / 100
     };
     const results = DrawdownModel.simulate(options);
     drawChart(results);
     drawTable(results);
-    document.getElementById("chart-horizon").textContent = `${options.years} YEARS · ${options.simulations.toLocaleString("en-GB")} SIMULATIONS`;
+    document.getElementById("chart-horizon").textContent = `${options.years} YEARS · AGE ${startAge}–${startAge + options.years} · ${options.simulations.toLocaleString("en-GB")} SIMULATIONS`;
   }
   const status = document.getElementById("form-status");
   const exportButton = document.getElementById("export");
@@ -141,7 +144,12 @@
       }, value));
       wrapper.append(element("rect", { width: 1000, height: 1210, fill: "#f5f6f2" }));
       text(30, 38, "Drawdown visualiser", { "font-family": "Georgia, serif", "font-size": 28 });
-      text(30, 65, `Illustrative scenario: ${document.getElementById("years").value} years · ${document.getElementById("simulations").value} simulations · Inflation ${document.getElementById("inflation").value}% · Equities ${document.getElementById("equity-return").value}% · Bonds ${document.getElementById("bond-return").value}%`);
+      const age = Number(document.getElementById("start-age").value);
+      const years = Number(document.getElementById("years").value);
+      const strategy = document.getElementById("strategy");
+      const inflation = strategy.value === "inflation-adjusted" ? `Inflation ${document.getElementById("inflation").value}%` : "Inflation not applied";
+      text(30, 59, `Illustrative scenario: age ${age}–${age + years} · ${years} years · ${document.getElementById("simulations").value} simulations · Fees ${document.getElementById("fees").value}%`);
+      text(30, 76, `${strategy.selectedOptions[0].textContent} · ${inflation} · Equities ${document.getElementById("equity-return").value}% · Bonds ${document.getElementById("bond-return").value}%`);
       text(30, 90, "Synthetic returns, not historical UK market data. Results are not financial advice.", { fill: "#7d765b" });
       wrapper.append(element("rect", { x: 30, y: 110, width: 940, height: 530, rx: 10, fill: "#fff", stroke: "#e8ece6" }));
       text(58, 145, "THE BIG PICTURE", { fill: "#6d9477", "font-size": 11, "font-weight": "bold" });
@@ -194,9 +202,11 @@
       const link = document.createElement("a");
       link.href = downloadUrl;
       link.download = "drawdown-visualiser.png";
+      document.body.append(link);
       link.click();
+      link.remove();
       setTimeout(() => URL.revokeObjectURL(downloadUrl), 60000);
-      exportStatus.textContent = "Image downloaded.";
+      exportStatus.textContent = "Download requested.";
     } catch (exception) {
       exportStatus.textContent = "Unable to export the image. Please try again.";
       console.error(exception);
